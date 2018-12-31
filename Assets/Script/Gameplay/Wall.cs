@@ -14,6 +14,7 @@ namespace GameFramework.Gameplay
 
         public ObjectColor.color color;
         private SpriteRenderer _spriteRenderer;
+        private bool isActive = true;
 
         // Use this for initialization
         void Start()
@@ -28,10 +29,20 @@ namespace GameFramework.Gameplay
             if (playerController.playerColor == color)
             {
                 Physics2D.IgnoreCollision(playerController.gameObject.GetComponent<Collider2D>(), gameObject.GetComponent<Collider2D>());
+                isActive = false;
             }
             else
             {
                 Physics2D.IgnoreCollision(playerController.gameObject.GetComponent<Collider2D>(), gameObject.GetComponent<Collider2D>(), false);
+                isActive = true;
+            }
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+                return isActive;
             }
         }
     }

@@ -34,7 +34,7 @@ namespace GameFramework.Character.Player
             WON
         }
 
-        private PlayerMovementState _playerMovementState = PlayerMovementState.WALKING;
+        private PlayerMovementState _playerMovementState = PlayerMovementState.FALLING;
         private float _currentJumpHeight;
         private Rigidbody2D _rigidbody;
 
@@ -62,35 +62,40 @@ namespace GameFramework.Character.Player
         // Update is called once per frame
         void Update()
         {
-            if (_playerMovementState != PlayerMovementState.DEAD && _playerMovementState != PlayerMovementState.WON)
+            if (!IsGameFinished())
             {
-                if (Input.GetButtonDown("Jump") && _playerMovementState == PlayerMovementState.WALKING)
+                if (CanPlayerJump() && IsPlayerJumping())
                 {
                     _currentJumpHeight = jumpHeight + gameObject.transform.position.y;
                     _playerMovementState = PlayerMovementState.JUMPING;
                 }
+
+                if(_playerMovementState == PlayerMovementState.JUMPING && !IsPlayerJumping()){
+                     _playerMovementState = PlayerMovementState.FALLING;
+                }
+
                 if (_playerMovementState == PlayerMovementState.JUMPING)
                 {
 
-                    gameObject.transform.position += new Vector3(Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, verticalSpeed * Time.deltaTime);
-                    if (gameObject.transform.position.y >= _currentJumpHeight - deadZone)
+                    MoveWithJump();
+                    if (IsMaxHeight())
                     {
                         _playerMovementState = PlayerMovementState.FALLING;
                     }
                 }
                 else
                 {
-                    gameObject.transform.position += new Vector3(Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, 0);
+                    Move();
                 }
             }
-        }
+         }
 
         void OnCollisionEnter2D(Collision2D collision)
         {
             //TODO Ajouté la détection sur le coté du cube pour le mettre à Falling
             if (collision.gameObject.tag == "Walking" || collision.gameObject.tag == "WallWalking")
             {
-                if (collision.contacts[0].point.y > gameObject.transform.position.y)
+                if (collision.gameObject.tag.Contains("Roof"))
                 {
                     _playerMovementState = PlayerMovementState.FALLING;
                 }
@@ -132,5 +137,39 @@ namespace GameFramework.Character.Player
             _playerMovementState = PlayerMovementState.WON;
         }
 
+        void MoveWithJump()
+        {
+            gameObject.transform.position += new Vector3(Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, verticalSpeed * Time.deltaTime);
+        }
+
+        void Move()
+        {
+            gameObject.transform.position += new Vector3(Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, 0);
+        }
+
+        bool IsMaxHeight()
+        {
+            return gameObject.transform.position.y >= _currentJumpHeight - deadZone;
+        }
+
+        bool IsGameFinished()
+        {
+            return _playerMovementState == PlayerMovementState.DEAD || _playerMovementState == PlayerMovementState.WON;
+        }
+
+        bool IsPlayerWalking()
+        {
+            return _playerMovementState == PlayerMovementState.WALKING;
+        }
+
+        bool IsPlayerJumping()
+        {
+            return Input.GetButton("Jump");
+        }
+
+        bool CanPlayerJump()
+        {
+            return IsPlayerWalking();
+        }
     }
 }

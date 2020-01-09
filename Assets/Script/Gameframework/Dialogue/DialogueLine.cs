@@ -1,22 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
+using GameFramework.Entities;
 
 namespace GameFramework.Dialogue
 {
-    public class DialogueLine : MonoBehaviour
+    [CreateAssetMenu(fileName = "DialogueLine", menuName = "Data/DialogueLine", order = 1)]
+    public class DialogueLine : ScriptableObject
     {
+        [SerializeField]
+        private Speaker speaker;
+        [SerializeField]
+        private string line;
 
-        // Use this for initialization
-        void Start()
-        {
 
+        public Sprite GetAvatar() {
+            return speaker.avatar;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
+        public string GetSpeakerName() {
+            return speaker.characterName;
         }
+
+        public string GetDialogueLine() {
+            return line;
+        }
+
     }
 }

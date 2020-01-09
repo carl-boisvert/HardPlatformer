@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using GameFramework;
 
-namespace GameFramework.Gameplay
+namespace Gameplay
 {
 
     [RequireComponent(typeof(Collider2D))]
@@ -21,9 +22,9 @@ namespace GameFramework.Gameplay
 
         void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.gameObject.tag.Contains("Player"))
+            if (col.gameObject.tag == "Player")
             {
-                EventSystem.OnPlayerDied();
+                GameEventSystem.OnPlayerDied();
             }
 
         }

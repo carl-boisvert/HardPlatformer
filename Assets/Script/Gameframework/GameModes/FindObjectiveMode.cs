@@ -16,14 +16,19 @@ namespace GameFramework.GameMode
         // Use this for initialization
         void Start()
         {
-            EventSystem.OnPlayerGotObjectiveEvent += OnPlayerGotObjective;
+            GameEventSystem.OnPlayerGotObjectiveEvent += OnPlayerGotObjective;
+        }
+
+        private void OnDestroy()
+        {
+            GameEventSystem.OnPlayerGotObjectiveEvent -= OnPlayerGotObjective;
         }
 
         void OnPlayerGotObjective(Objective objective)
         {
             objectives.Remove(objective);
             if(objectives.Count == 0){
-                EventSystem.OnPlayerWon();
+                GameEventSystem.OnPlayerWon();
             }
         }
     }
